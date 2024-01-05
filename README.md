@@ -10,4 +10,9 @@ The data captured with Wireshark is first converted into a text file, and this t
 
 ![image](https://github.com/kimkimhun3/LLC-4000_Congestion_tool/assets/47348954/ad26eb8c-fe10-4f86-b7bb-0d45ab568c28)
 
+Windows PC上で動作するツールとして作成する。(青網掛：ボタン、黄網掛：コメント)
+開発言語は、問わない。
+
+![image](https://github.com/kimkimhun3/LLC-4000_Congestion_tool/assets/47348954/84704cd4-86b0-4807-9042-0f8949ea8594)
+
 
