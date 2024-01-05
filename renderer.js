@@ -2,7 +2,6 @@
 
 var inputText = "";
 var simpleB;
-let jkjArmy = [];
 let newArr = [];
 let decodedStringFde9 = [];
 let decodedStringFde8 = []; 
@@ -98,31 +97,81 @@ ipcRenderer.on("file-content", (event, content) => {
 });
 ipcRenderer.on("file-created", (event, filePath) => {
   window.currentFilePath = filePath;
-  showAlert("ファイルを作成した：" + "<br>" + filePath);
   const filePathElement = document.getElementById("created-file1");
-  filePathElement.innerHTML = filePath;
+  const filePathLink = document.createElement("a");
+  filePathLink.href = "#"; // Set the href attribute to "#" or a valid URL
+  filePathLink.textContent = filePath;
+  filePathLink.classList.add("no-underline");
+  // Add click event listener to the link
+  filePathLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    shell.showItemInFolder(filePath);
+  });
+  filePathElement.innerHTML = "";
+  filePathElement.appendChild(filePathLink);
 });
+
 ipcRenderer.on("file-created-2", (event, filePath) => {
   window.currentFilePath2 = filePath;
-  showAlert("ファイルを作成した:" + "<br>" + filePath);
+  //showAlert("ファイルを作成した:" + "<br>" + filePath);
   const filePathElement = document.getElementById("created-file2");
-  filePathElement.innerHTML = filePath;
+  const filePathLink = document.createElement("a");
+  filePathLink.href = "#"; // Set the href attribute to "#" or a valid URL
+  filePathLink.textContent = filePath;
+  filePathLink.classList.add("no-underline");
+  // Add click event listener to the link
+  filePathLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    shell.showItemInFolder(filePath);
+  });
+  filePathElement.innerHTML = "";
+  filePathElement.appendChild(filePathLink);
 });
 ipcRenderer.on("file-created-3", (event, filePath) => {
   window.currentFilePath3 = filePath;
-  showAlert("ファイルを作成した:" + "<br>" + filePath);
+  //showAlert("ファイルを作成した:" + "<br>" + filePath);
   const filePathElement = document.getElementById("created-file3");
-  filePathElement.innerHTML = filePath;
+  const filePathLink = document.createElement("a");
+  filePathLink.href = "#"; // Set the href attribute to "#" or a valid URL
+  filePathLink.textContent = filePath;
+  filePathLink.classList.add("no-underline");
+  // Add click event listener to the link
+  filePathLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    shell.showItemInFolder(filePath);
+  });
+  filePathElement.innerHTML = "";
+  filePathElement.appendChild(filePathLink);
 });
 ipcRenderer.on("file-created-4", (event, filePath) => {
   window.currentFilePath4 = filePath;
-  showAlert("ファイルを作成した:" + "<br>" + filePath);
+  //showAlert("ファイルを作成した:" + "<br>" + filePath);
   const filePathElement = document.getElementById("created-file4");
-  filePathElement.innerHTML = filePath;
+  const filePathLink = document.createElement("a");
+  filePathLink.href = "#"; // Set the href attribute to "#" or a valid URL
+  filePathLink.textContent = filePath;
+  filePathLink.classList.add("no-underline");
+  // Add click event listener to the link
+  filePathLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    shell.showItemInFolder(filePath);
+  });
+  filePathElement.innerHTML = "";
+  filePathElement.appendChild(filePathLink);
 });
 ipcRenderer.on("file-path", (event, filePath) => {
   const filePathElement = document.getElementById("uploaded-file-path");
-  filePathElement.innerText = filePath;
+  const filePathLink = document.createElement("a");
+  filePathLink.href = "#"; // Set the href attribute to "#" or a valid URL
+  filePathLink.textContent = filePath;
+  filePathLink.classList.add("no-underline");
+  // Add click event listener to the link
+  filePathLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    shell.showItemInFolder(filePath);
+  });
+  filePathElement.innerHTML = "";
+  filePathElement.appendChild(filePathLink);
 });
 function handleConvert() {
   const inputTexts = [
@@ -207,8 +256,8 @@ function handleConvert() {
 
   decodedStringFde8 = decodeFde8.map(hexToAscii);
   decodedStringFde9 = decodeFde9.map(hexToAscii);
-  console.log("FDE9( Length: ",decodedStringFde9.length);
-  console.log("Full Data: ", decodedStringFde9);
+  console.log("FDE8( Length: ",decodedStringFde8);
+  // console.log("Full Data: ", decodedStringFde9);
   // for (let i = 0; i < decodedStringFde9.length; i++) {
   //   newArr.filter(element => !elementsToRemove.includes(element)).map(element => element.replace(/[^a-zA-Z0-9=,:-]/g, ''));
   // }
@@ -227,25 +276,20 @@ function handleConvert() {
   
     return element.replace(/[^a-zA-Z0-9=,:-]/g, '');
   }).filter(element => element !== undefined);
-  
-
-  console.log("This is new array:",newArr);
-  // jkjArmy = decodedStringFde9.map((line) => line.replace(/\s+/g, '')).join('\n').split(',');
-  // //jkjArmy = decodedStringFde9.map((str) => str.replace(/\n/g, ''));
-  // //window.jkjArmy = jkjArmy;
-  // console.log("jkjArmy Value: ",jkjArmy.length);
 
   const decodedAll = allDecode.map(hexToAscii);
   // Assign decoded strings to global variables
-  window.decodedStringFde8 = decodedStringFde8
-    .map((line) => line.replace(/\s+/g, ""))
-    .join("\n");
+    console.log(typeof decodedStringFde8);
+  decodedStringFde8 = decodedStringFde8
+  .map(line => line.replace(/\x00/g, '').trim()).filter(line => line !== '').join('\n');
+  console.log(typeof decodedStringFde8);
+  window.decodedStringFde8 = decodedStringFde8;
   window.decodedStringFde9 = decodedStringFde9
-    .map((line) => line.replace(/\s+/g, ""))
-    .join("\n");
+  .map((line) => line.trim())
+  .filter((line) => line !== '')
+  .join("\n");
   window.decodedAll = decodedAll
-    .map((line) => line.replace(/\s+/g, ""))
-    .join("\n");
+  .map(line => line.replace(/\x00/g, '').trim()).filter(line => line !== '').join('\n');
   window.excelData = excelData;
 
   fileContent.value = window.decodedStringFde8;
@@ -342,22 +386,28 @@ function createExcelFile(filePath) {
   const xlsxChart = new XLSXChart();
 
   // Prepare options for the first chart (all data)
-  const opts = {
-    chart: 'line',
-    titles: allProperties,
-    fields: dataObjects.map((_, i) => i), // Use allProperties for fields
-    data: chartData,
-    chartTitle: 'All Data Line Chart',
-    lineWidth: 0.2,
-    lineStyle: Array(allProperties.length).fill('none'),
-  };
-  console.log(typeof dataObjects.map((_, i) => i));
-  console.log("Ah nis ey ke: ",dataObjects.map((_, i) => i));
+  // const opts = {
+  //   chart: 'line',
+  //   titles: allProperties,
+  //   fields: dataObjects.map((_, i) => i), // Use allProperties for fields
+  //   data: chartData,
+  //   chartTitle: 'All Data Line Chart',
+  //   lineWidth: 0.2,
+  //   lineStyle: Array(allProperties.length).fill('none'),
+  // };
+  // console.log(typeof dataObjects.map((_, i) => i));
+  // console.log("Ah nis ey ke: ",dataObjects.map((_, i) => i));
 
   const fieldDataset = dataObjects.map((_, i) => i)
   const ouropts = {
     charts: [
       {
+        position: {
+          fromColumn: 1,
+          toColumn: 28,
+          fromRow: 1,
+          toRow: 21,
+        },
         chart: 'column',
         titles: allProperties,
         fields: fieldDataset,
@@ -365,8 +415,15 @@ function createExcelFile(filePath) {
         chartTitle: 'All Data Line Chart',
         lineWidth: 0.2,
         lineStyle: Array(allProperties.length).fill('none'),
+        chartArea: { left: 50, top: 50, width: '70%', height: '70%' },
       },
       {
+        position: {
+          fromColumn: 1,
+          toColumn: 28,
+          fromRow: 22,
+          toRow: 42,
+        },
         chart: 'column',
         titles: ['JT'],
         fields: fieldDataset,
@@ -376,6 +433,12 @@ function createExcelFile(filePath) {
         lineStyle: ['blue'],
       },
       {
+        position: {
+          fromColumn: 1,
+          toColumn: 28,
+          fromRow: 43,
+          toRow: 63,
+        },
         chart: 'column',
         titles: ['JT-A'],
         fields: fieldDataset,
@@ -385,6 +448,12 @@ function createExcelFile(filePath) {
         lineStyle: ['red'],
       },
       {
+        position: {
+          fromColumn: 1,
+          toColumn: 28,
+          fromRow: 64,
+          toRow: 84,
+        },
         chart: 'column',
         titles: ['JT-SDA'],
         fields: fieldDataset,
@@ -394,6 +463,12 @@ function createExcelFile(filePath) {
         lineStyle: ['blue'],
       },
       {
+        position: {
+          fromColumn: 1,
+          toColumn: 28,
+          fromRow: 85,
+          toRow: 105,
+        },
         chart: 'column',
         titles: ['RTT'],
         fields: fieldDataset, // Use allProperties for fields
@@ -403,6 +478,12 @@ function createExcelFile(filePath) {
         lineStyle: ['green'],
       },
       {
+        position: {
+          fromColumn: 1,
+          toColumn: 28,
+          fromRow: 106,
+          toRow: 126,
+        },
         chart: 'column',
         titles: ['RTT-A'],
         fields: fieldDataset,
@@ -412,6 +493,12 @@ function createExcelFile(filePath) {
         lineStyle: ['yellow'],
       },
       {
+        position: {
+          fromColumn: 1,
+          toColumn: 28,
+          fromRow: 127,
+          toRow: 147,
+        },
         chart: 'column',
         titles: ['RTT-SDA'],
         fields: fieldDataset,
@@ -421,6 +508,12 @@ function createExcelFile(filePath) {
         lineStyle: ['purple'],
       },
       {
+        position: {
+          fromColumn: 1,
+          toColumn: 28,
+          fromRow: 148,
+          toRow: 168,
+        },
         chart: 'column',
         titles: ['RTT-STRD'],
         fields: fieldDataset,
@@ -429,7 +522,13 @@ function createExcelFile(filePath) {
         lineWidth: 0.2,
         lineStyle: ['cyan'],
       },
-      {
+      {        
+        position: {
+        fromColumn: 1,
+        toColumn: 28,
+        fromRow: 169,
+        toRow: 189,
+      },
         chart: 'column',
         titles: ['RTT-LTRD'],
         fields: fieldDataset,
@@ -439,6 +538,12 @@ function createExcelFile(filePath) {
         lineStyle: ['orange'],
       },
       {
+        position: {
+          fromColumn: 1,
+          toColumn: 28,
+          fromRow: 190,
+          toRow: 210,
+        },
         chart: 'column',
         titles: ['PLOST'],
         fields: fieldDataset,
@@ -458,13 +563,12 @@ function createExcelFile(filePath) {
   
   xlsxChart.generate(ouropts, function (err, data) {
   const loadingOverlay = document.getElementById("loadingOverlay");
-    console.log('here');
     if (err) {
       console.error(err);
     } else {
       loadingOverlay.style.display = "flex";
       fs.writeFileSync(filePath, data);
-         loadingOverlay.style.display = "none";
+      loadingOverlay.style.display = "none";
       showAlert("ファイルダウンロードを保存しました");
       console.log('Excel file with line chart created successfully at:', filePath);
     }
