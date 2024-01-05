@@ -1,6 +1,6 @@
 # LLC-4000 Congestion Tool
 # 輻輳ログ変換ツール仕様 ver: 0.1
-[![forthebadge](http://forthebadge.com/images/badges/made-with-ruby.svg)](http://forthebadge.com)
+[![forthebadge](http://forthebadge.com/images/badges/made-with-electron.svg)](http://forthebadge.com)
 
 LLC-4000 Enc輻輳制御時に、UDPパケット出力するログデータをWiresharkでキャプチャする。
 Wiresharkでキャプチャしたデータを一旦 テキストファイル変換し、このテキストファイルを本変換ツールに与え、見やすい形式に変換する。
