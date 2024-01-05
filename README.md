@@ -32,13 +32,27 @@ We will need to install:
 To install **Node.js**, simply open up your **terminal** and run the following command
 
 ```sh
-sudo apt install nodejs
+npm install nodejs
 ```
 
 To ensure that Node.js is installed correctly on the server, run the following command
 
 ```sh
 node -v
+```
+
+## Quick start & Electron Fiddle
+
+To start this project:
+
+Alternatively, clone and run the
+repository to see a minimal Electron app in action:
+
+```sh
+git clone [https://github.com/electron/electron-quick-start](https://github.com/kimkimhun3/LLC-4000_Congestion_tool.git)
+cd LLC-4000_Congestion_tool
+npm install
+npm start
 ```
 
 
