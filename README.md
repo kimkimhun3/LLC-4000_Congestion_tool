@@ -1,7 +1,7 @@
 # LLC-4000 Congestion Tool
-# 輻輳ログ変換ツール仕様 ver: 0.1
+# 輻輳ログ変換ツール仕様 ver: 0.1
 
-##Made with
+## Made with
 [![Electron Logo](https://electronjs.org/images/electron-logo.svg)](https://electronjs.org)
 
 LLC-4000 Enc輻輳制御時に、UDPパケット出力するログデータをWiresharkでキャプチャする。
