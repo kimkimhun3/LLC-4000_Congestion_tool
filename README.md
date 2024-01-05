@@ -8,3 +8,6 @@ Wiresharkでキャプチャしたデータを一旦 テキストファイル変�
 Capture the log data output by UDP packets using Wireshark during LLC-4000 Enc congestion control.
 The data captured with Wireshark is first converted into a text file, and this text file is fed to this conversion tool to convert it into an easy-to-read format.
 
+![image](https://github.com/kimkimhun3/LLC-4000_Congestion_tool/assets/47348954/ad26eb8c-fe10-4f86-b7bb-0d45ab568c28)
+
+
