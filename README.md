@@ -16,5 +16,30 @@ Windows PC上で動作するツールとして作成する。(青網掛：ボタ
 ![image](https://github.com/kimkimhun3/LLC-4000_Congestion_tool/assets/47348954/84704cd4-86b0-4807-9042-0f8949ea8594)
 
 ## 入力ログファイル仕様![image](https://github.com/kimkimhun3/LLC-4000_Congestion_tool/assets/47348954/cb96e640-0d48-4932-b93f-46ed0d46721c)
+Input log file specifications
+
+![image](https://github.com/kimkimhun3/LLC-4000_Congestion_tool/assets/47348954/824578c5-9531-4b16-a3cb-0ac973e0464a)
+
+## Installation
+We will need to install:
+
+- **Node.js**
+  
+### Node.js
+
+To install **Node.js**, simply open up your **terminal** and run the following command
+
+```sh
+sudo apt install nodejs
+```
+
+To ensure that Node.js is installed correctly on the server, run the following command
+
+```sh
+node -v
+```
 
 
+## Release History
+
+- 0.1
