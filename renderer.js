@@ -222,12 +222,20 @@ function handleConvert() {
     .filter((i) => i.length > 0)
     .map((item) => item.reduce((a, b) => a + b));
   for (const item of target) {
+    const lastIndex = item.lastIndexOf('0a');
+    const cleanedItem = lastIndex !== -1
+      ? item.substring(0, lastIndex + 2).replace(/0+$/g, '')
+      : item;
+  
     if (item.includes(hexPort1)) {
-      groupFde8.push(item);
+      groupFde8.push(cleanedItem);
     } else if (item.includes(hexPort2)) {
-      groupFde9.push(item);
+      groupFde9.push(cleanedItem);
     }
   }
+
+  console.log("fde8", groupFde8);
+  console.log("fde9", groupFde9);
   for (const item of target) {
     if (item.includes(hexPort1) || item.includes(hexPort2)) {
       allPort.push(item);
@@ -241,22 +249,24 @@ function handleConvert() {
     const findFde8 = item.indexOf(hexPort2);
     return item.substr(findFde8 + 12);
   });
-  const allDecode = allPort.map((item) => {
+  const allDecode = allPort.map(item => {
     const findPort1 = item.indexOf(hexPort1);
     const findPort2 = item.indexOf(hexPort2);
-    const indexToUse =
-      findPort1 !== -1 ? findPort1 : findPort2 !== -1 ? findPort2 : -1;
+    const indexToUse = (findPort1 !== -1) ? findPort1 : (findPort2 !== -1) ? findPort2 : -1;
     if (indexToUse !== -1) {
-      return item.substr(indexToUse + 12);
+      const lastIndex0a = item.lastIndexOf('0a');
+      return (lastIndex0a !== -1)
+        ? item.substring(indexToUse + 12, lastIndex0a)
+        : item;
     } else {
-      // Handle the case where neither hexPort1 nor hexPort2 is found
-      return null; // or any other value based on your requirement
+      return null;
     }
   });
 
+  console.log("allDecoed: ",allDecode);
+
   decodedStringFde8 = decodeFde8.map(hexToAscii);
   decodedStringFde9 = decodeFde9.map(hexToAscii);
-  console.log("FDE8( Length: ",decodedStringFde8);
   // console.log("Full Data: ", decodedStringFde9);
   // for (let i = 0; i < decodedStringFde9.length; i++) {
   //   newArr.filter(element => !elementsToRemove.includes(element)).map(element => element.replace(/[^a-zA-Z0-9=,:-]/g, ''));
