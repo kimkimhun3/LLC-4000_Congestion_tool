@@ -234,8 +234,8 @@ function handleConvert() {
     }
   }
 
-  console.log("fde8", groupFde8);
-  console.log("fde9", groupFde9);
+  // console.log("fde8", groupFde8);
+  // console.log("fde9", groupFde9);
   for (const item of target) {
     if (item.includes(hexPort1) || item.includes(hexPort2)) {
       allPort.push(item);
@@ -263,7 +263,7 @@ function handleConvert() {
     }
   });
 
-  console.log("allDecoed: ",allDecode);
+  // console.log("allDecoed: ",allDecode);
 
   decodedStringFde8 = decodeFde8.map(hexToAscii);
   decodedStringFde9 = decodeFde9.map(hexToAscii);
@@ -275,24 +275,41 @@ function handleConvert() {
     'pLuWgCCcC2BB4D3ECrEB2EB4DcBEB5EC2EBEC5C',
     'ouWgCCCcBcC2B4DScECEBEB4DSEB5ECsEBECC5C'
   ];
+  console.log("All Fde9, ",decodedStringFde9);
   
   newArr = decodedStringFde9.map((element, index) => {
     for (const pattern of elementsToRemove) {
       element = element.replace(pattern, '');
     }
   
+
     // Convert sequence numbers to integers
     element = element.replace(/(\d+)\s/g, (match, group1) => `${parseInt(group1, 10)} `);
   
     return element.replace(/[^a-zA-Z0-9=,:-]/g, '');
   }).filter(element => element !== undefined);
+  console.log("New Array: ",newArr);
+// New Array include all of fde9, also evt
+
+
+ //Last function 
+//  const filteredArr = newArr.filter(item => {
+//   const evtValue = item.match(/evt=(\d+)/);
+//   return evtValue && evtValue[1] !== '0';
+// });
+// console.log("No zero ",filteredArr);
+// console.log("Type of filteredArr: ", typeof filteredArr);
+
+
+
+
 
   const decodedAll = allDecode.map(hexToAscii);
   // Assign decoded strings to global variables
-    console.log(typeof decodedStringFde8);
+  //console.log(typeof decodedStringFde8);
   decodedStringFde8 = decodedStringFde8
   .map(line => line.replace(/\x00/g, '').trim()).filter(line => line !== '').join('\n');
-  console.log(typeof decodedStringFde8);
+  //console.log(typeof decodedStringFde8);
   window.decodedStringFde8 = decodedStringFde8;
   window.decodedStringFde9 = decodedStringFde9
   .map((line) => line.trim())
@@ -335,6 +352,18 @@ function handleKeyDown(event) {
   }
 }
 
+// function parseEventData(dataString) {
+//   const eventData = {};
+//   const keyValuePairs = dataString.split(':').pop().split(',');
+
+//   keyValuePairs.forEach((pair) => {
+//     const [key, value] = pair.split('=');
+//     eventData[key] = parseInt(value, 10);
+//   });
+
+//   return eventData;
+// }
+
 function parseEventData(dataString) {
   const eventData = {};
   const keyValuePairs = dataString.split(':').pop().split(',');
@@ -344,7 +373,43 @@ function parseEventData(dataString) {
     eventData[key] = parseInt(value, 10);
   });
 
+  // Extract and add "evt" value
+  const evtValue = dataString.split(':')[0].split('=')[1];
+  eventData['evt'] = parseInt(evtValue, 10);
+
   return eventData;
+}
+
+
+
+function getSelectedColumns() {
+  const selectedColumns = [];
+  if (document.getElementById('checkboxJT').checked) selectedColumns.push('JT');
+  if (document.getElementById('checkboxJTA').checked) selectedColumns.push('JT-A');
+  if (document.getElementById('checkboxJTSDA').checked) selectedColumns.push('JT-SDA');
+  if (document.getElementById('checkboxRTT').checked) selectedColumns.push('RTT');
+  if (document.getElementById('checkboxRTTA').checked) selectedColumns.push('RTT-A');
+  if (document.getElementById('checkboxRTTSDA').checked) selectedColumns.push('RTT-SDA');
+  if (document.getElementById('checkboxRTTSTRD').checked) selectedColumns.push('RTT-STRD');
+  if (document.getElementById('checkboxRTTLTRD').checked) selectedColumns.push('RTT-LTRD');
+  if (document.getElementById('checkboxPLOST').checked) selectedColumns.push('PLOST');
+  if (document.getElementById('checkboxevt').checked) selectedColumns.push('evt');
+
+  return selectedColumns;
+}
+function getUncheckedColumns() {
+  const uncheckedColumns = [];
+  if (!document.getElementById('checkboxJT').checked) uncheckedColumns.push('JT');
+  if (!document.getElementById('checkboxJTA').checked) uncheckedColumns.push('JT-A');
+  if (!document.getElementById('checkboxJTSDA').checked) uncheckedColumns.push('JT-SDA');
+  if (!document.getElementById('checkboxRTT').checked) uncheckedColumns.push('RTT');
+  if (!document.getElementById('checkboxRTTA').checked) uncheckedColumns.push('RTT-A');
+  if (!document.getElementById('checkboxRTTSDA').checked) uncheckedColumns.push('RTT-SDA');
+  if (!document.getElementById('checkboxRTTSTRD').checked) uncheckedColumns.push('RTT-STRD');
+  if (!document.getElementById('checkboxRTTLTRD').checked) uncheckedColumns.push('RTT-LTRD');
+  if (!document.getElementById('checkboxPLOST').checked) uncheckedColumns.push('PLOST');
+
+  return uncheckedColumns;
 }
 
 function createExcelFile(filePath) {
@@ -352,11 +417,14 @@ function createExcelFile(filePath) {
   const dataObjects = newArr
     .filter((dataString) => !dataString.includes('pLuWgCCcC2BB4D3ECrEB2EB4DcBEB5EC2EBEC5C') && !dataString.includes('ouWgCCCcBcC2B4DScECEBEB4DSEB5ECsEBECC5C'))
     .map(parseEventData);
-
   if (!dataObjects || dataObjects.length === 0) {
     console.error('Data objects are undefined or have length 0.');
     return;
   }
+console.log("Data Object: ",dataObjects);
+const evtValues = dataObjects.map((data) => data.evt);
+console.log("ONLY evt: ",evtValues);
+
 
   // Extract all unique property names from all data points
   const allProperties = Array.from(new Set(dataObjects.flatMap((item) => Object.keys(item))));
@@ -366,6 +434,10 @@ function createExcelFile(filePath) {
   allProperties.forEach((columnName) => {
     chartData[columnName] = dataObjects.map((item) => (item && item[columnName] !== undefined ? item[columnName] : null));
   });
+  console.log("Chart Data: ",chartData);
+
+
+  /* Each Graph one by one */
   const jtChartData = {
     JT: dataObjects.map((item) => (item && item['JT'] !== undefined ? item['JT'] : null)),
   }
@@ -393,22 +465,28 @@ function createExcelFile(filePath) {
   const plostChartData = {
     PLOST: dataObjects.map((item) => (item && item['PLOST'] !== undefined ? item['PLOST'] : null)),
   }
+  const evtChartData = {
+    evt: dataObjects.map((item) => (item && item['evt'] !== undefined ? item['evt'] : null)),
+  }
   const xlsxChart = new XLSXChart();
 
-  // Prepare options for the first chart (all data)
-  // const opts = {
-  //   chart: 'line',
-  //   titles: allProperties,
-  //   fields: dataObjects.map((_, i) => i), // Use allProperties for fields
-  //   data: chartData,
-  //   chartTitle: 'All Data Line Chart',
-  //   lineWidth: 0.2,
-  //   lineStyle: Array(allProperties.length).fill('none'),
-  // };
-  // console.log(typeof dataObjects.map((_, i) => i));
-  // console.log("Ah nis ey ke: ",dataObjects.map((_, i) => i));
+const selectedColumns = getSelectedColumns();
+//const unselectedColumns = getUncheckedColumns();
+// console.log("Selected Columns: ",selectedColumns);
+// console.log("Unselected Columns: ",unselectedColumns);
+const newArrayData = {};
+
+selectedColumns.forEach((columnName) => {
+  newArrayData[columnName] = dataObjects.map((item) =>
+    item && item[columnName] !== undefined ? item[columnName] : null
+  );
+});
+// Object.assign(newArrayData,filteredArr);
+console.log("Type of NEW DATA: ", typeof newArrayData);
+console.log("NEW DATA: ",newArrayData);
 
   const fieldDataset = dataObjects.map((_, i) => i)
+  // console.log("Field Dataset: ,",fieldDataset);
   const ouropts = {
     charts: [
       {
@@ -418,10 +496,40 @@ function createExcelFile(filePath) {
           fromRow: 1,
           toRow: 21,
         },
+        customColors: {
+          points: {
+              "PLOST": {
+                  "PLOST": 'ff0000',
+              },
+              "JT-A": {
+                "JT-A": '808080'
+              },
+              "RTT-A": {
+                "RTT-A": 'ffa500'
+              }
+          },
+          series: {
+              "PLOST": {
+                  fill: 'ff0000',
+                  line: 'ff0000',
+              },
+              "JT-A": {
+                fill: '808080',
+                line: '808080'
+              },
+              "RTT-A": {
+                fill: 'ffa500',
+                line: 'ffa500'
+              }
+          }
+      },
         chart: 'column',
-        titles: allProperties,
+        titles: selectedColumns,
         fields: fieldDataset,
-        data: chartData,
+        data: 
+          newArrayData
+        ,
+
         chartTitle: 'All Data Line Chart',
         lineWidth: 0.2,
         lineStyle: Array(allProperties.length).fill('none'),
@@ -434,13 +542,25 @@ function createExcelFile(filePath) {
           fromRow: 22,
           toRow: 42,
         },
+        customColors: {
+          points: {
+              "PLOST": {
+                  "PLOST": 'ff0000',
+              },
+          },
+          series: {
+              "PLOST": {
+                  fill: 'ff0000',
+                  line: 'ff0000',
+              }
+          }
+      },
         chart: 'column',
-        titles: ['JT'],
+        titles: ['PLOST'],
         fields: fieldDataset,
-        data: jtChartData,
-        chartTitle: 'JT Line Chart',
+        data: plostChartData,
+        chartTitle: 'PLOST Line Chart',
         lineWidth: 0.2,
-        lineStyle: ['blue'],
       },
       {
         position: {
@@ -450,12 +570,11 @@ function createExcelFile(filePath) {
           toRow: 63,
         },
         chart: 'column',
-        titles: ['JT-A'],
+        titles: ['JT'],
         fields: fieldDataset,
-        data: jtAChartData,
-        chartTitle: 'JT-A Line Chart',
+        data: jtChartData,
+        chartTitle: 'JT Line Chart',
         lineWidth: 0.2,
-        lineStyle: ['red'],
       },
       {
         position: {
@@ -465,12 +584,11 @@ function createExcelFile(filePath) {
           toRow: 84,
         },
         chart: 'column',
-        titles: ['JT-SDA'],
+        titles: ['JT-A'],
         fields: fieldDataset,
-        data: jtSDAChartData,
-        chartTitle: 'JT-SDA Line Chart',
+        data: jtAChartData,
+        chartTitle: 'JT-A Line Chart',
         lineWidth: 0.2,
-        lineStyle: ['blue'],
       },
       {
         position: {
@@ -480,12 +598,11 @@ function createExcelFile(filePath) {
           toRow: 105,
         },
         chart: 'column',
-        titles: ['RTT'],
-        fields: fieldDataset, // Use allProperties for fields
-        data: rttChartData,
-        chartTitle: 'RTT Line Chart',
+        titles: ['JT-SDA'],
+        fields: fieldDataset,
+        data: jtSDAChartData,
+        chartTitle: 'JT-SDA Line Chart',
         lineWidth: 0.2,
-        lineStyle: ['green'],
       },
       {
         position: {
@@ -495,12 +612,11 @@ function createExcelFile(filePath) {
           toRow: 126,
         },
         chart: 'column',
-        titles: ['RTT-A'],
-        fields: fieldDataset,
-        data: rttAChartData,
-        chartTitle: 'RTT-A Line Chart',
+        titles: ['RTT'],
+        fields: fieldDataset, // Use allProperties for fields
+        data: rttChartData,
+        chartTitle: 'RTT Line Chart',
         lineWidth: 0.2,
-        lineStyle: ['yellow'],
       },
       {
         position: {
@@ -510,12 +626,11 @@ function createExcelFile(filePath) {
           toRow: 147,
         },
         chart: 'column',
-        titles: ['RTT-SDA'],
+        titles: ['RTT-A'],
         fields: fieldDataset,
-        data: rttSDAChartData,
-        chartTitle: 'RTT-SDA Line Chart',
+        data: rttAChartData,
+        chartTitle: 'RTT-A Line Chart',
         lineWidth: 0.2,
-        lineStyle: ['purple'],
       },
       {
         position: {
@@ -525,19 +640,32 @@ function createExcelFile(filePath) {
           toRow: 168,
         },
         chart: 'column',
+        titles: ['RTT-SDA'],
+        fields: fieldDataset,
+        data: rttSDAChartData,
+        chartTitle: 'RTT-SDA Line Chart',
+        lineWidth: 0.2,
+      },
+      {
+        position: {
+          fromColumn: 1,
+          toColumn: 28,
+          fromRow: 169,
+          toRow: 189,
+        },
+        chart: 'column',
         titles: ['RTT-STRD'],
         fields: fieldDataset,
         data: rttSTRDChartData,
         chartTitle: 'RTT-STRD Line Chart',
         lineWidth: 0.2,
-        lineStyle: ['cyan'],
       },
       {        
         position: {
         fromColumn: 1,
         toColumn: 28,
-        fromRow: 169,
-        toRow: 189,
+        fromRow: 190,
+        toRow: 210,
       },
         chart: 'column',
         titles: ['RTT-LTRD'],
@@ -545,26 +673,81 @@ function createExcelFile(filePath) {
         data: rttLTRDChartData,
         chartTitle: 'RTT-LTRD Line Chart',
         lineWidth: 0.2,
-        lineStyle: ['orange'],
       },
       {
         position: {
           fromColumn: 1,
           toColumn: 28,
-          fromRow: 190,
-          toRow: 210,
+          fromRow: 211,
+          toRow: 231,
         },
-        chart: 'column',
-        titles: ['PLOST'],
-        fields: fieldDataset,
-        data: plostChartData,
-        chartTitle: 'PLOST Line Chart',
-        lineWidth: 0.2,
-        lineStyle: ['yellow'],
+        
+        titles: [
+          "Title 1",
+          "Title 2",
+          "Title 3",
+          "Title 4"
+        ],
+        fields: [
+          "Field 1",
+          "Field 2",
+          "Field 3",
+          "Field 4"
+        ],
+        data: {
+          "Title 1": {
+            "chart": "column",
+            "Field 1": 5,
+            "Field 2": 10,
+            "Field 3": 15,
+            "Field 4": 20
+          },
+          "Title 2": {
+            "chart": "column",
+            "Field 1": 10,
+            "Field 2": 5,
+            "Field 3": 20,
+            "Field 4": 15
+          },
+          "Title 3": {
+            "chart": "line",
+            "Field 1": 20,
+            "Field 2": 15,
+            "Field 3": 10,
+            "Field 4": 5
+          },
+          "Title 4": {
+            "chart": "line",
+            "Field 1": 30,
+            "Field 2": 20,
+            "Field 3": 15,
+            "Field 4": 10
+          }
+          
+        },
+        chartTitle: "Column and line chart"
       },
+      {        
+        position: {
+        fromColumn: 1,
+        toColumn: 28,
+        fromRow: 232,
+        toRow: 252,
+      },
+        chart: 'line',
+        titles: ['evt'],
+        fields: fieldDataset,
+        data: evtChartData,
+        chartTitle: 'evt Chart',
+        lineWidth: 0.2,
+      },
+      
     ],
   };
-
+//   ouropts.legends = selectedColumns.map(column => ({
+//     series: column,
+//     label: column, // You can customize the label as needed
+// }));
     // table: {
     //   titles: allProperties,
     //   fields: dataObjects.map((_, i) => i),
