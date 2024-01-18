@@ -113,7 +113,6 @@ ipcRenderer.on("file-created", (event, filePath) => {
 
 ipcRenderer.on("file-created-2", (event, filePath) => {
   window.currentFilePath2 = filePath;
-  //showAlert("ファイルを作成した:" + "<br>" + filePath);
   const filePathElement = document.getElementById("created-file2");
   const filePathLink = document.createElement("a");
   filePathLink.href = "#"; // Set the href attribute to "#" or a valid URL
@@ -129,7 +128,6 @@ ipcRenderer.on("file-created-2", (event, filePath) => {
 });
 ipcRenderer.on("file-created-3", (event, filePath) => {
   window.currentFilePath3 = filePath;
-  //showAlert("ファイルを作成した:" + "<br>" + filePath);
   const filePathElement = document.getElementById("created-file3");
   const filePathLink = document.createElement("a");
   filePathLink.href = "#"; // Set the href attribute to "#" or a valid URL
@@ -145,7 +143,6 @@ ipcRenderer.on("file-created-3", (event, filePath) => {
 });
 ipcRenderer.on("file-created-4", (event, filePath) => {
   window.currentFilePath4 = filePath;
-  //showAlert("ファイルを作成した:" + "<br>" + filePath);
   const filePathElement = document.getElementById("created-file4");
   const filePathLink = document.createElement("a");
   filePathLink.href = "#"; // Set the href attribute to "#" or a valid URL
@@ -234,8 +231,8 @@ function handleConvert() {
     }
   }
 
-  console.log("fde8", groupFde8);
-  console.log("fde9", groupFde9);
+  // console.log("fde8", groupFde8);
+  // console.log("fde9", groupFde9);
   for (const item of target) {
     if (item.includes(hexPort1) || item.includes(hexPort2)) {
       allPort.push(item);
@@ -263,7 +260,7 @@ function handleConvert() {
     }
   });
 
-  console.log("allDecoed: ",allDecode);
+  // console.log("allDecoed: ",allDecode);
 
   decodedStringFde8 = decodeFde8.map(hexToAscii);
   decodedStringFde9 = decodeFde9.map(hexToAscii);
@@ -275,24 +272,28 @@ function handleConvert() {
     'pLuWgCCcC2BB4D3ECrEB2EB4DcBEB5EC2EBEC5C',
     'ouWgCCCcBcC2B4DScECEBEB4DSEB5ECsEBECC5C'
   ];
+  // console.log("All Fde9, ",decodedStringFde9);
   
   newArr = decodedStringFde9.map((element, index) => {
     for (const pattern of elementsToRemove) {
       element = element.replace(pattern, '');
     }
   
+
     // Convert sequence numbers to integers
     element = element.replace(/(\d+)\s/g, (match, group1) => `${parseInt(group1, 10)} `);
   
     return element.replace(/[^a-zA-Z0-9=,:-]/g, '');
   }).filter(element => element !== undefined);
+  // console.log("New Array: ",newArr);
+// New Array include all of fde9, also evt
 
   const decodedAll = allDecode.map(hexToAscii);
   // Assign decoded strings to global variables
-    console.log(typeof decodedStringFde8);
+  //console.log(typeof decodedStringFde8);
   decodedStringFde8 = decodedStringFde8
   .map(line => line.replace(/\x00/g, '').trim()).filter(line => line !== '').join('\n');
-  console.log(typeof decodedStringFde8);
+  //console.log(typeof decodedStringFde8);
   window.decodedStringFde8 = decodedStringFde8;
   window.decodedStringFde9 = decodedStringFde9
   .map((line) => line.trim())
@@ -335,6 +336,18 @@ function handleKeyDown(event) {
   }
 }
 
+// function parseEventData(dataString) {
+//   const eventData = {};
+//   const keyValuePairs = dataString.split(':').pop().split(',');
+
+//   keyValuePairs.forEach((pair) => {
+//     const [key, value] = pair.split('=');
+//     eventData[key] = parseInt(value, 10);
+//   });
+
+//   return eventData;
+// }
+
 function parseEventData(dataString) {
   const eventData = {};
   const keyValuePairs = dataString.split(':').pop().split(',');
@@ -344,7 +357,42 @@ function parseEventData(dataString) {
     eventData[key] = parseInt(value, 10);
   });
 
+  // Extract and add "evt" value
+  const evtValue = dataString.split(':')[0].split('=')[1];
+  eventData['evt'] = parseInt(evtValue, 10);
+
   return eventData;
+}
+
+
+
+function getSelectedColumns() {
+  const selectedColumns = [];
+  if (document.getElementById('checkboxJT').checked) selectedColumns.push('JT');
+  if (document.getElementById('checkboxJTA').checked) selectedColumns.push('JT-A');
+  if (document.getElementById('checkboxJTSDA').checked) selectedColumns.push('JT-SDA');
+  if (document.getElementById('checkboxRTT').checked) selectedColumns.push('RTT');
+  if (document.getElementById('checkboxRTTA').checked) selectedColumns.push('RTT-A');
+  if (document.getElementById('checkboxRTTSDA').checked) selectedColumns.push('RTT-SDA');
+  if (document.getElementById('checkboxRTTSTRD').checked) selectedColumns.push('RTT-STRD');
+  if (document.getElementById('checkboxRTTLTRD').checked) selectedColumns.push('RTT-LTRD');
+  if (document.getElementById('checkboxPLOST').checked) selectedColumns.push('PLOST');
+
+  return selectedColumns;
+}
+function getUncheckedColumns() {
+  const uncheckedColumns = [];
+  if (!document.getElementById('checkboxJT').checked) uncheckedColumns.push('JT');
+  if (!document.getElementById('checkboxJTA').checked) uncheckedColumns.push('JT-A');
+  if (!document.getElementById('checkboxJTSDA').checked) uncheckedColumns.push('JT-SDA');
+  if (!document.getElementById('checkboxRTT').checked) uncheckedColumns.push('RTT');
+  if (!document.getElementById('checkboxRTTA').checked) uncheckedColumns.push('RTT-A');
+  if (!document.getElementById('checkboxRTTSDA').checked) uncheckedColumns.push('RTT-SDA');
+  if (!document.getElementById('checkboxRTTSTRD').checked) uncheckedColumns.push('RTT-STRD');
+  if (!document.getElementById('checkboxRTTLTRD').checked) uncheckedColumns.push('RTT-LTRD');
+  if (!document.getElementById('checkboxPLOST').checked) uncheckedColumns.push('PLOST');
+
+  return uncheckedColumns;
 }
 
 function createExcelFile(filePath) {
@@ -352,20 +400,28 @@ function createExcelFile(filePath) {
   const dataObjects = newArr
     .filter((dataString) => !dataString.includes('pLuWgCCcC2BB4D3ECrEB2EB4DcBEB5EC2EBEC5C') && !dataString.includes('ouWgCCCcBcC2B4DScECEBEB4DSEB5ECsEBECC5C'))
     .map(parseEventData);
-
   if (!dataObjects || dataObjects.length === 0) {
     console.error('Data objects are undefined or have length 0.');
     return;
   }
+// console.log("Data Object: ",dataObjects);
+//const evtValues = dataObjects.map((data) => data.evt);
+// const evtValues = dataObjects.map((data) => (data.evt === 0 ? "" : data.evt));
+// console.log("ONLY evt: ",evtValues);
+
 
   // Extract all unique property names from all data points
-  const allProperties = Array.from(new Set(dataObjects.flatMap((item) => Object.keys(item))));
+  //const allProperties = Array.from(new Set(dataObjects.flatMap((item) => Object.keys(item))));
 
   // Prepare data for xlsx-chart for all data
-  const chartData = {};
-  allProperties.forEach((columnName) => {
-    chartData[columnName] = dataObjects.map((item) => (item && item[columnName] !== undefined ? item[columnName] : null));
-  });
+  // const chartData = {};
+  // allProperties.forEach((columnName) => {
+  //   chartData[columnName] = dataObjects.map((item) => (item && item[columnName] !== undefined ? item[columnName] : null));
+  // });
+  // console.log("Chart Data: ",chartData);
+
+
+  /* Each Graph one by one */
   const jtChartData = {
     JT: dataObjects.map((item) => (item && item['JT'] !== undefined ? item['JT'] : null)),
   }
@@ -393,185 +449,412 @@ function createExcelFile(filePath) {
   const plostChartData = {
     PLOST: dataObjects.map((item) => (item && item['PLOST'] !== undefined ? item['PLOST'] : null)),
   }
-  const xlsxChart = new XLSXChart();
+  // const evtChartData = {
+  //   evt: dataObjects.map((item) => (item && item['evt'] !== undefined ? item['evt'] : null)),
+  // }
+  const evtChartData = {
+    evt: dataObjects.map((item) => (item && item['evt'] !== undefined ? (item['evt'] === 0 ? " " : item['evt']) : null)),
+  };
 
-  // Prepare options for the first chart (all data)
-  // const opts = {
-  //   chart: 'line',
-  //   titles: allProperties,
-  //   fields: dataObjects.map((_, i) => i), // Use allProperties for fields
-  //   data: chartData,
-  //   chartTitle: 'All Data Line Chart',
-  //   lineWidth: 0.2,
-  //   lineStyle: Array(allProperties.length).fill('none'),
-  // };
-  // console.log(typeof dataObjects.map((_, i) => i));
-  // console.log("Ah nis ey ke: ",dataObjects.map((_, i) => i));
+  const filteredEvtData = {
+    "PLOST-F": dataObjects.map((item) => (item && item['evt'] === 1 ? item['evt'] : " ")),
+    "JT-F": dataObjects.map((item) => (item && item['evt'] === 2 ? item['evt'] : " ")),
+    "RTT-SDA-F": dataObjects.map((item) => (item && item['evt'] === 4 ? item['evt'] : " ")),
+    "RTT-STRD-F": dataObjects.map((item) => (item && item['evt'] === 8 ? item['evt'] : " ")),
+    "RTT-LTRD-F": dataObjects.map((item) => (item && item['evt'] === 10 ? item['evt'] : " ")),
+    "PLOST-M": dataObjects.map((item) => (item && item['evt'] === 20 ? item['evt'] : " ")),
+    "JT-M": dataObjects.map((item) => (item && item['evt'] === 40 ? item['evt'] : " ")),
+    "RTT-SDA-M": dataObjects.map((item) => (item && item['evt'] === 80 ? item['evt'] : " ")),
+    "RTT-STRD-M": dataObjects.map((item) => (item && item['evt'] === 100 ? item['evt'] : " ")),
+    "RTT-LTRD-M": dataObjects.map((item) => (item && item['evt'] === 200 ? item['evt'] : " ")),
+  };
+  
+console.log("FilteredEvt Data: ",filteredEvtData);  
+const nonEmptyArrays = [];
+// Helper function to check if an array has values other than " ", zero, or empty strings
+const hasNonEmptyValues = (array) => array.some((value) => value !== " " && value !== 0 && value !== "");
 
-  const fieldDataset = dataObjects.map((_, i) => i)
-  const ouropts = {
-    charts: [
-      {
-        position: {
-          fromColumn: 1,
-          toColumn: 28,
-          fromRow: 1,
-          toRow: 21,
-        },
-        chart: 'column',
-        titles: allProperties,
-        fields: fieldDataset,
-        data: chartData,
-        chartTitle: 'All Data Line Chart',
-        lineWidth: 0.2,
-        lineStyle: Array(allProperties.length).fill('none'),
-        chartArea: { left: 50, top: 50, width: '70%', height: '70%' },
+// Check each property in filteredEvtData
+Object.entries(filteredEvtData).forEach(([propertyName, array]) => {
+  if (hasNonEmptyValues(array)) {
+    nonEmptyArrays.push(propertyName);
+  }
+});
+// console.log("nonEmptyArrays: ",nonEmptyArrays);
+
+// const allEvt = ["evt1","evt2","evt4","evt10","evt20","evt40","evt80","evt100","evt200"]
+
+// console.log("filteredEvtData",filteredEvtData);
+// console.log("evtChartData: ",evtChartData);
+const xlsxChart = new XLSXChart();
+
+const selectedColumns = getSelectedColumns();
+//const unselectedColumns = getUncheckedColumns();
+// console.log("Selected Columns: ",selectedColumns);
+// console.log("Unselected Columns: ",unselectedColumns);
+
+//select Column + filteredEvtData:
+
+
+
+
+const newArrayData = {};
+
+selectedColumns.forEach((columnName) => {
+  newArrayData[columnName] = dataObjects.map((item) =>
+    item && item[columnName] !== undefined ? item[columnName] : null
+  );
+});
+// Object.assign(newArrayData,filteredArr);
+// console.log("Type of NEW DATA: ", typeof newArrayData);
+// console.log("NEW DATA: ",newArrayData);
+
+const selectedAndEvt = selectedColumns.concat(nonEmptyArrays);
+// console.log("Selected + Evt data: ",selectedAndEvt);
+// console.log("Selected Column: ",selectedColumns);
+
+//love
+// Add column data to the data object
+var datas = {};
+let maxValue = 0
+var dataNamesArray = [];
+selectedColumns.forEach(title => {
+  datas[title] = {
+    "chart": "column",
+  };
+  newArrayData[title].forEach((value, index) => {
+    var dataKey = index + 1;
+    if (value !== 0 && value !== "") {
+      if (maxValue < value) {
+        maxValue = value
+      }
+      datas[title][dataKey] = value;
+    }
+  });
+  // Check if there are properties other than 'chart'
+  if (Object.keys(datas[title]).length > 1) {
+    dataNamesArray.push(title);
+  } else {
+    // If no properties, remove the empty object
+    delete datas[title];
+  }
+});
+
+nonEmptyArrays.forEach(title => {
+  datas[title] = {
+    "chart": "line",
+  };
+  filteredEvtData[title].forEach((value, index) => {
+    var dataKey = index + 1;
+    // console.log(value !== 0 && value !== "")
+    if (value !== 0 && value !== "") {
+      datas[title][dataKey] = value === " " ? value : maxValue
+    }
+  });
+  // Check if there are properties other than 'chart'
+  if (Object.keys(datas[title]).length > 1) {
+    dataNamesArray.push(title);
+  } else {
+    // If no properties, remove the empty object
+    delete datas[title];
+  }
+});
+console.log("dataNames: ",dataNamesArray);
+console.log("Data Data: ",datas);
+
+const fieldDataset = dataObjects.map((_, i) => i+1) //start from 1 rather than 0
+
+  // console.log("Field Dataset: ,",fieldDataset);
+const ourOpts = {
+  charts: [
+    {
+      position: {
+        fromColumn: 1,
+        toColumn: 28,
+        fromRow: 22,
+        toRow: 42,
       },
-      {
-        position: {
-          fromColumn: 1,
-          toColumn: 28,
-          fromRow: 22,
-          toRow: 42,
+      customColors: {
+        points: {
+            "PLOST": {
+                "PLOST": 'ff0000',
+            },
         },
-        chart: 'column',
-        titles: ['JT'],
-        fields: fieldDataset,
-        data: jtChartData,
-        chartTitle: 'JT Line Chart',
-        lineWidth: 0.2,
-        lineStyle: ['blue'],
+        series: {
+            "PLOST": {
+                fill: 'ff0000',
+                line: 'ff0000',
+            }
+        }
       },
-      {
-        position: {
-          fromColumn: 1,
-          toColumn: 28,
-          fromRow: 43,
-          toRow: 63,
+      chart: 'column',
+      titles: ['PLOST'],
+      fields: fieldDataset,
+      data: plostChartData,
+      chartTitle: 'PLOST Chart',
+      lineWidth: 0.2,
+    },
+    {
+      position: {
+        fromColumn: 1,
+        toColumn: 28,
+        fromRow: 1,
+        toRow: 21,
+      },
+      customColors: {
+        points: {
+            "PLOST": {
+                "PLOST": 'ff0000',
+            },
+            "JT-A": {
+              "JT-A": '808080'
+            },
+            "RTT-A": {
+              "RTT-A": '097969'
+            },
+            "PLOST-F": {
+              "PLOST-F": 'ffffff'
+            },
+            "JT-F": {
+              "JT-F": 'ffffff'
+            },
+            "RTT-SDA-F": {
+              "RTT-SDA-F": 'ffffff'
+            },
+            "RTT-STRD-F": {
+              "RTT-STRD-F": 'ffffff'
+            },
+            "RTT-LTRD-F": {
+              "RTT-LTRD-F": 'ffffff'
+            },
+            "PLOST-M": {
+              "PLOST-M": 'ff0000'
+            },
+            "JT-M": {
+              "JT-M": 'ffffff'
+            },
+            "RTT-SDA-M": {
+              "RTT-SDA-M": 'ffffff'
+            },
+            "RTT-STRD-M": {
+              "RTT-STRD-M": 'ffffff'
+            },
+            "RTT-LTRD-M": {
+              "RTT-LTRD-M": 'ffffff'
+            }
         },
-        chart: 'column',
-        titles: ['JT-A'],
-        fields: fieldDataset,
-        data: jtAChartData,
-        chartTitle: 'JT-A Line Chart',
-        lineWidth: 0.2,
-        lineStyle: ['red'],
+        series: {
+            "PLOST": {
+                fill: 'ff0000',
+                line: 'ff0000',
+            },
+            "JT-A": {
+              fill: '808080',
+              line: '808080'
+            },
+            "RTT-A": {
+              fill: '097969',
+              line: '097969'
+            },
+            "PLOST-F": {
+              fill: 'ffffff',
+              line: 'ffffff'
+            },
+            "JT-F": {
+              fill: 'ffffff',
+              line: 'ffffff'
+            },
+            "RTT-SDA-F": {
+              fill: 'ffffff',
+              line: 'ffffff'
+            },
+            "RTT-STRD-F": {
+              fill: 'ffffff',
+              line: 'ffffff'
+            },
+            "RTT-LTRD-F": {
+              fill: 'ffffff',
+              line: 'ffffff'
+            },
+            "PLOST-M": {
+              fill: 'ffffff',
+              line: 'ffffff'
+            },
+            "JT-M": {
+              fill: 'ffffff',
+              line: 'ffffff'
+            },
+            "RTT-SDA-M": {
+              fill: 'ffffff',
+              line: 'ffffff'
+            },
+            "RTT-STRD-M": {
+              fill: 'ffffff',
+              line: 'ffffff'
+            },
+            "RTT-LTRD-M": {
+              fill: 'ffffff',
+              line: 'ffffff'
+            }
+          }
       },
-      {
-        position: {
-          fromColumn: 1,
-          toColumn: 28,
-          fromRow: 64,
-          toRow: 84,
-        },
-        chart: 'column',
-        titles: ['JT-SDA'],
-        fields: fieldDataset,
-        data: jtSDAChartData,
-        chartTitle: 'JT-SDA Line Chart',
-        lineWidth: 0.2,
-        lineStyle: ['blue'],
+      titles: selectedAndEvt,
+      fields: fieldDataset,
+      data: datas,
+      chartTitle: 'All Data Chart'
+    },
+    {
+      position: {
+        fromColumn: 1,
+        toColumn: 28,
+        fromRow: 43,
+        toRow: 63,
       },
-      {
-        position: {
-          fromColumn: 1,
-          toColumn: 28,
-          fromRow: 85,
-          toRow: 105,
-        },
-        chart: 'column',
-        titles: ['RTT'],
-        fields: fieldDataset, // Use allProperties for fields
-        data: rttChartData,
-        chartTitle: 'RTT Line Chart',
-        lineWidth: 0.2,
-        lineStyle: ['green'],
+      chart: 'column',
+      titles: ['JT'],
+      fields: fieldDataset,
+      data: jtChartData,
+      chartTitle: 'JT Chart',
+      lineWidth: 0.2,
+    },
+    {
+      position: {
+        fromColumn: 1,
+        toColumn: 28,
+        fromRow: 64,
+        toRow: 84,
       },
-      {
-        position: {
-          fromColumn: 1,
-          toColumn: 28,
-          fromRow: 106,
-          toRow: 126,
-        },
-        chart: 'column',
-        titles: ['RTT-A'],
-        fields: fieldDataset,
-        data: rttAChartData,
-        chartTitle: 'RTT-A Line Chart',
-        lineWidth: 0.2,
-        lineStyle: ['yellow'],
+      chart: 'column',
+      titles: ['JT-A'],
+      fields: fieldDataset,
+      data: jtAChartData,
+      chartTitle: 'JT-A Chart',
+      lineWidth: 0.2,
+    },
+    {
+      position: {
+        fromColumn: 1,
+        toColumn: 28,
+        fromRow: 85,
+        toRow: 105,
       },
-      {
-        position: {
-          fromColumn: 1,
-          toColumn: 28,
-          fromRow: 127,
-          toRow: 147,
-        },
-        chart: 'column',
-        titles: ['RTT-SDA'],
-        fields: fieldDataset,
-        data: rttSDAChartData,
-        chartTitle: 'RTT-SDA Line Chart',
-        lineWidth: 0.2,
-        lineStyle: ['purple'],
+      chart: 'column',
+      titles: ['JT-SDA'],
+      fields: fieldDataset,
+      data: jtSDAChartData,
+      chartTitle: 'JT-SDA Chart',
+      lineWidth: 0.2,
+    },
+    {
+      position: {
+        fromColumn: 1,
+        toColumn: 28,
+        fromRow: 106,
+        toRow: 126,
       },
-      {
-        position: {
-          fromColumn: 1,
-          toColumn: 28,
-          fromRow: 148,
-          toRow: 168,
-        },
-        chart: 'column',
-        titles: ['RTT-STRD'],
-        fields: fieldDataset,
-        data: rttSTRDChartData,
-        chartTitle: 'RTT-STRD Line Chart',
-        lineWidth: 0.2,
-        lineStyle: ['cyan'],
+      chart: 'column',
+      titles: ['RTT'],
+      fields: fieldDataset, // Use allProperties for fields
+      data: rttChartData,
+      chartTitle: 'RTT Chart',
+      lineWidth: 0.2,
+    },
+    {
+      position: {
+        fromColumn: 1,
+        toColumn: 28,
+        fromRow: 127,
+        toRow: 147,
       },
-      {        
-        position: {
+      chart: 'column',
+      titles: ['RTT-A'],
+      fields: fieldDataset,
+      data: rttAChartData,
+      chartTitle: 'RTT-A Chart',
+      lineWidth: 0.2,
+    },
+    {
+      position: {
+        fromColumn: 1,
+        toColumn: 28,
+        fromRow: 148,
+        toRow: 168,
+      },
+      chart: 'column',
+      titles: ['RTT-SDA'],
+      fields: fieldDataset,
+      data: rttSDAChartData,
+      chartTitle: 'RTT-SDA Chart',
+      lineWidth: 0.2,
+    },
+    {
+      position: {
         fromColumn: 1,
         toColumn: 28,
         fromRow: 169,
         toRow: 189,
       },
-        chart: 'column',
-        titles: ['RTT-LTRD'],
-        fields: fieldDataset,
-        data: rttLTRDChartData,
-        chartTitle: 'RTT-LTRD Line Chart',
-        lineWidth: 0.2,
-        lineStyle: ['orange'],
-      },
-      {
-        position: {
-          fromColumn: 1,
-          toColumn: 28,
-          fromRow: 190,
-          toRow: 210,
-        },
-        chart: 'column',
-        titles: ['PLOST'],
-        fields: fieldDataset,
-        data: plostChartData,
-        chartTitle: 'PLOST Line Chart',
-        lineWidth: 0.2,
-        lineStyle: ['yellow'],
-      },
-    ],
-  };
-
-    // table: {
-    //   titles: allProperties,
-    //   fields: dataObjects.map((_, i) => i),
-    //   data: chartData, // Use the same data as the "All Data Line Chart"
-    // },
+      chart: 'column',
+      titles: ['RTT-STRD'],
+      fields: fieldDataset,
+      data: rttSTRDChartData,
+      chartTitle: 'RTT-STRD Chart',
+      lineWidth: 0.2,
+    },
+    {        
+      position: {
+      fromColumn: 1,
+      toColumn: 28,
+      fromRow: 190,
+      toRow: 210,
+    },
+      chart: 'column',
+      titles: ['RTT-LTRD'],
+      fields: fieldDataset,
+      data: rttLTRDChartData,
+      chartTitle: 'RTT-LTRD Chart',
+      lineWidth: 0.2,
+    },
+    // {
+    //   position: {
+    //     fromColumn: 1,
+    //     toColumn: 28,
+    //     fromRow: 211,
+    //     toRow: 231
+    //   },
+    //   chart: "line",
+    //   titles: [
+    //     "Price",
+    //     "Number"
+    //   ],
+    //   fields: [
+    //     "Apple",
+    //     "Blackberry",
+    //     "Strawberry",
+    //     "Cowberry"
+    //   ],
+    //   data: {
+    //     "Price": {
+    //       "Apple": 10,
+    //       "Blackberry": 5,
+    //       "Strawberry": 15,
+    //       "Cowberry": 20
+    //     },
+    //     "Number": {
+    //       "Apple": 5,
+    //       "Blackberry": 2,
+    //       "Strawberry": 9,
+    //       "Cowberry": 3
+    //     }
+    //   },
+    //   chartTitle: "Scatter chart"
+    // }
   
-  xlsxChart.generate(ouropts, function (err, data) {
+    
+  ],
+};
+
+  xlsxChart.generate(ourOpts, function (err, data) {
   const loadingOverlay = document.getElementById("loadingOverlay");
     if (err) {
       console.error(err);
@@ -584,13 +867,7 @@ function createExcelFile(filePath) {
     }
   });
   
+  
 
-  // xlsxChart.generate(ouropts, function (err, data) {
-  //   if (err) {
-  //     console.error(err);
-  //   } else {
-  //     fs.writeFileSync(filePath, data);
-  //     console.log('Excel file with line chart created successfully at:', filePath);
-  //   }
-  // });
+
 }
